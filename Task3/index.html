@@ -1,0 +1,228 @@
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Music Player</title>
+
+                <style>
+
+                body{
+                font-family: Arial;
+                background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                height:100vh;
+                color:white;
+                }
+
+                .player{
+                width:350px;
+                background:rgba(0,0,0,0.5);
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+                }
+
+                h2{
+                color:#00f2ff;
+                }
+
+                .controls button{
+                padding:10px 15px;
+                margin:10px;
+                font-size:18px;
+                border:none;
+                background:#00f2ff;
+                cursor:pointer;
+                border-radius:5px;
+                }
+
+                .controls button:hover{
+                background:#00c2cc;
+                }
+
+                .progress{
+                width:100%;
+                margin:10px 0;
+                }
+
+                .volume{
+                width:100%;
+                }
+
+                            .playlist{
+                            margin-top:20px;
+                            text-align:left;
+                            }
+
+                            .playlist li{
+                        cursor:pointer;
+                            padding:5px;
+                            }
+
+                            .playlist li:hover{
+                            color:#00f2ff;
+                            }
+
+                </style>
+                </head>
+
+                <body>
+
+                <div class="player">
+
+                <h2>Music Player</h2>
+
+                <p id="title">Song Title</p>
+                <p id="artist">Artist</p>
+
+                <audio id="audio"></audio>
+
+                <input type="range" id="progress" class="progress" value="0">
+
+                <div class="controls">
+
+                <button onclick="prevSong()">⏮</button>
+                <button onclick="playPause()">▶</button>
+                <button onclick="nextSong()">⏭</button>
+
+                </div>
+
+                <p>Volume</p>
+                <input type="range" id="volume" class="volume" min="0" max="1" step="0.01">
+
+                <ul class="playlist" id="playlist"></ul>
+
+                </div>
+
+                <script>
+
+                        const songs = [
+
+                        {
+                        title:"Song 1",
+                        artist:"Artist 1",
+                        src:"song1.mpeg"
+                        },
+
+                        {
+                        title:"Song 2",
+                        artist:"Artist 2",
+                        src:"song2.mpeg"
+                        },
+
+                        {
+                title:"Song 3",
+                artist:"Artist 3",
+                src:"song3.mpeg"
+                }
+
+                ];
+
+                let currentSong = 0;
+
+                const audio = document.getElementById("audio");
+                const title = document.getElementById("title");
+                const artist = document.getElementById("artist");
+                const progress = document.getElementById("progress");
+                const volume = document.getElementById("volume");
+                const playlist = document.getElementById("playlist");
+
+                function loadSong(index){
+
+                audio.src = songs[index].src;
+                title.innerText = songs[index].title;
+                artist.innerText = songs[index].artist;
+
+                }
+
+                function playPause(){
+
+                if(audio.paused){
+                audio.play();
+                }else{
+                audio.pause();
+                }
+
+                }
+
+                function nextSong(){
+
+                currentSong++;
+
+                if(currentSong >= songs.length){
+                currentSong = 0;
+                }
+
+                loadSong(currentSong);
+                audio.play();
+
+                }
+
+                function prevSong(){
+
+                currentSong--;
+
+                if(currentSong < 0){
+                currentSong = songs.length - 1;
+                }
+
+                loadSong(currentSong);
+                audio.play();
+
+                }
+
+                audio.addEventListener("timeupdate",()=>{
+
+                progress.value = (audio.currentTime / audio.duration) * 100;
+
+                });
+
+                progress.addEventListener("input",()=>{
+
+                audio.currentTime = (progress.value / 100) * audio.duration;
+
+                });
+
+                volume.addEventListener("input",()=>{
+
+                audio.volume = volume.value;
+
+                });
+
+                audio.addEventListener("ended",()=>{
+
+                nextSong();
+
+                });
+
+                function loadPlaylist(){
+
+                songs.forEach((song,index)=>{
+
+                const li = document.createElement("li");
+                li.innerText = song.title + " - " + song.artist;
+
+                li.onclick = ()=>{
+
+                currentSong = index;
+                loadSong(currentSong);
+                audio.play();
+
+                };
+
+                playlist.appendChild(li);
+
+                });
+
+                }
+
+                loadSong(currentSong);
+                loadPlaylist();
+
+                </script>
+
+                </body>
+                </html>
